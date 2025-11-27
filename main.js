@@ -198,6 +198,7 @@ document.addEventListener('DOMContentLoaded', () => {
         playerTitle.textContent = song.name;
         playerArtist.textContent = 'Unknown Artist';
         playerArt.src = 'logo.png';
+        document.querySelector('.player-bar').classList.add('playing');
     };
 
     const stopPlayback = () => {
@@ -210,6 +211,7 @@ document.addEventListener('DOMContentLoaded', () => {
         playerTitle.textContent = 'Select a song';
         playerArtist.textContent = 'No artist';
         playerArt.src = 'logo.png';
+        document.querySelector('.player-bar').classList.remove('playing');
         playPauseBtn.innerHTML = `<i class="bi bi-play-circle-fill fs-2"></i>`;
         progressBar.value = 0;
         progressBar.style.setProperty('--progress', '0%');
@@ -251,8 +253,13 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- 6. Player Controls ---
     const togglePlayPause = () => {
         if (!activePlayer.src) return;
-        if (activePlayer.paused) activePlayer.play();
-        else activePlayer.pause();
+        if (activePlayer.paused) {
+             activePlayer.play();
+             document.querySelector('.player-bar').classList.add('playing');
+        } else {
+             activePlayer.pause();
+             document.querySelector('.player-bar').classList.remove('playing');
+        }
         playPauseBtn.innerHTML = `<i class="bi bi-${activePlayer.paused ? 'play' : 'pause'}-circle-fill fs-2"></i>`;
     };
     playPauseBtn.addEventListener('click', togglePlayPause);
@@ -294,7 +301,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!activePlayer || !activePlayer.duration) return;
         const progress = activePlayer.currentTime / activePlayer.duration;
         progressBar.value = progress * 100;
-        progressBar.style.setProperty('value', `${progress * 100}%`);
+        progressBar.style.setProperty('--progress', `${progress * 100}%`);
         updateTimeDisplay();
         animationFrameId = requestAnimationFrame(animateProgressBar);
     }
