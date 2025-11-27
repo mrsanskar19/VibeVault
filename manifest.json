@@ -1,5 +1,5 @@
 {
-  "name": "My Music Player",
+  "name": "VibeVault | Music Player",
   "short_name": "MusicPlayer",
   "start_url": "./index.html",
   "display": "standalone",
