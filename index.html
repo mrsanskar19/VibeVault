@@ -1,0 +1,242 @@
+
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Offline Media Player</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link rel="manifest" href="manifest.json">
+    <link href="logo.png" rel="icon">
+</head>
+<body>
+
+    <!-- Header -->
+    <nav class="navbar navbar-expand-md bg-body-tertiary border-bottom fixed-top">
+        <div class="container-fluid">
+            <button class="btn btn-icon me-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebar" aria-controls="sidebar">
+                <i class="bi bi-list"></i>
+            </button>
+            <a class="navbar-brand d-flex align-items-center" href="#">
+                <img src="logo.png" alt="Logo" width="40" height="40" class="me-2">
+                <span class="fs-4">Media Player</span>
+            </a>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item d-flex align-items-center me-3">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" role="switch" id="theme-switcher">
+                            <label class="form-check-label" for="theme-switcher">Blue/Glass</label>
+                        </div>
+                    </li>
+                    <li class="nav-item">
+                        <input type="file" id="file-upload" class="d-none" multiple>
+                         <button class="btn btn-primary me-2" id="upload-file-btn">Upload File</button>
+                    </li>
+                    <li class="nav-item">
+                         <input type="file" id="folder-upload" class="d-none" webkitdirectory>
+                         <button class="btn btn-secondary" id="upload-folder-btn">Upload Folder</button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Sidebar Offcanvas -->
+     <div class="offcanvas offcanvas-start bg-body-tertiary" tabindex="-1" id="sidebar" aria-labelledby="sidebarLabel">
+        <div class="offcanvas-header border-bottom">
+            <h5 class="offcanvas-title" id="sidebarLabel">Menu</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body d-flex flex-column">
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted text-uppercase">
+                        <span>Library</span>
+                    </h6>
+                    <ul class="nav flex-column" id="library-links">
+                        <li class="nav-item"><a class="nav-link active" href="#" data-filter="all"><i class="bi bi-music-note-list me-2"></i> All Media</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#" data-filter="favorites"><i class="bi bi-heart-fill me-2"></i> Favorites</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted text-uppercase">
+                        <span>Playlists</span>
+                        <a class="link-secondary" href="#" id="add-playlist-btn" aria-label="Add a new playlist">
+                            <i class="bi bi-plus-circle"></i>
+                        </a>
+                    </h6>
+                    <ul class="nav flex-column mb-2" id="playlist-list">
+                        <!-- Playlists will be dynamically inserted here -->
+                    </ul>
+                </li>
+            </ul>
+            <div class="p-3 mt-auto">
+                <button class="btn btn-danger w-100" id="clear-library-btn">Clear Library</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div id="player-container" class="mb-3"></div>
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col"></th>
+                        <th scope="col">Title</th>
+                        <th scope="col">Type</th>
+                        <th scope="col"></th>
+                    </tr>
+                </thead>
+                <tbody id="media-library-body">
+                    <!-- Media items will be dynamically inserted here -->
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+    <!-- Player -->
+    <footer class="player-bar bg-body-tertiary border-top fixed-bottom">
+        <div class="container-fluid d-flex align-items-center justify-content-between h-100">
+            <div class="d-flex align-items-center col-md-3 overflow-hidden">
+                <img src="logo.png" id="player-art" alt="Album Art" width="50" height="50" class="me-3 flex-shrink-0">
+                <div class="text-truncate">
+                    <h6 class="mb-0 text-truncate" id="player-title">Select a song</h6>
+                    <small class="text-muted text-truncate" id="player-artist">No artist</small>
+                </div>
+            </div>
+            <div class="col-md-6 d-flex flex-column align-items-center">
+                <div class="d-flex align-items-center">
+                    <button class="btn btn-icon" id="shuffle-btn"><i class="bi bi-shuffle"></i></button>
+                    <button class="btn btn-icon" id="prev-btn"><i class="bi bi-skip-start-fill fs-4"></i></button>
+                    <button class="btn btn-icon btn-lg" id="play-pause-btn"><i class="bi bi-play-circle-fill fs-2"></i></button>
+                    <button class="btn btn-icon" id="next-btn"><i class="bi bi-skip-end-fill fs-4"></i></button>
+                    <button class="btn btn-icon" id="repeat-btn"><i class="bi bi-repeat"></i></button>
+                </div>
+                <div class="d-flex align-items-center w-100 mt-1">
+                    <small id="current-time">0:00</small>
+                    <input type="range" class="form-range mx-2" id="progress-bar" value="0">
+                    <small id="duration">0:00</small>
+                </div>
+            </div>
+            <div class="col-md-3 d-flex justify-content-end align-items-center">
+                 <button class="btn btn-icon d-md-none" id="volume-toggle-btn"><i class="bi bi-volume-up-fill"></i></button>
+                <div class="d-none d-md-flex align-items-center w-75">
+                    <i class="bi bi-volume-up-fill me-2"></i>
+                    <input type="range" class="form-range w-100" id="volume-bar" min="0" max="1" step="0.01" value="1">
+                    <span id="volume-indicator" class="ms-2" style="min-width: 40px;">100%</span>
+                </div>
+            </div>
+        </div>
+        <audio id="audio-player" class="d-none"></audio>
+    </footer>
+
+    <!-- Templates -->
+    <template id="video-player-template">
+        <video poster="logo.png" class="w-100"></video>
+    </template>
+
+    <template id="media-item-template">
+        <tr class="media-item">
+            <td class="align-middle" data-col="index"></td>
+            <td class="align-middle" data-col="icon">
+                 <div class="equalizer-container d-none">
+                    <div class="equalizer-bar"></div>
+                    <div class="equalizer-bar"></div>
+                    <div class="equalizer-bar"></div>
+                </div>
+            </td>
+            <td class="align-middle" data-col="title"></td>
+            <td class="align-middle" data-col="type"></td>
+            <td class="align-middle text-end">
+                <button class="btn btn-icon favorite-btn" data-id="">
+                    <i class="bi bi-heart"></i>
+                </button>
+                <div class="dropdown d-inline-block">
+                    <button class="btn btn-icon" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="bi bi-three-dots-vertical"></i>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item add-to-playlist-btn" href="#">Add to Playlist</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item remove-song-btn" href="#">Remove</a></li>
+                    </ul>
+                </div>
+            </td>
+        </tr>
+    </template>
+    
+    <template id="playlist-item-template">
+         <li class="nav-item">
+            <a class="nav-link d-flex justify-content-between align-items-center" href="#">
+                <span>
+                    <i class="bi bi-music-note-beamed me-2"></i>
+                    <span class="playlist-name"></span>
+                </span>
+                <button class="btn btn-sm btn-outline-danger delete-playlist-btn">
+                    <i class="bi bi-trash"></i>
+                </button>
+            </a>
+        </li>
+    </template>
+
+    <!-- Modals -->
+    <div class="modal fade" id="create-playlist-modal" tabindex="-1">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Create New Playlist</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <input type="text" id="playlist-name-input" class="form-control" placeholder="Playlist Name">
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary" id="save-playlist-btn">Save</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="modal fade" id="add-to-playlist-modal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add to Playlist</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <select class="form-select" id="playlist-selection">
+                       
+                    </select>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="add-to-playlist-confirm-btn">Add</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Toast Container -->
+    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+      <!-- Toasts will be dynamically added here -->
+    </div>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+    <script src="main.js"></script>
+</body>
+</html>
