@@ -25,12 +25,12 @@ body {
     background-color: var(--primary-bg);
     color: var(--text-color);
     padding-top: 65px;
-    padding-bottom: 80px;
+    padding-bottom: 90px;
 }
 
-.main-content { height: calc(100vh - 145px); overflow-y: auto; }
+.main-content { height: calc(100vh - 155px); overflow-y: auto; }
 .navbar, .player-bar, .offcanvas { background-color: var(--secondary-bg) !important; border-color: var(--border-color) !important; }
-.player-bar { z-index: 1040; }
+.player-bar { z-index: 1040; height: 90px; }
 
 [data-bs-theme="blue-glass"] .bg-body-tertiary { background-color: rgba(255, 255, 255, 0.1) !important; backdrop-filter: blur(10px); }
 [data-bs-theme="blue-glass"] .border-bottom,
@@ -117,6 +117,37 @@ body {
 @keyframes wave-3 {
     0%, 100% { transform: scaleY(0.3); }
     50% { transform: scaleY(0.5); }
+}
+
+/* Button transitions */
+.btn-icon {
+    transition: transform 0.1s ease, color 0.2s ease, background-color 0.2s ease;
+    border-radius: 50%;
+}
+.btn-icon:hover {
+    transform: scale(1.1);
+    background-color: rgba(255, 255, 255, 0.1);
+}
+.btn-icon:active {
+    transform: scale(0.95);
+}
+
+/* Table row hover effect */
+.media-item {
+    transition: background-color 0.2s ease;
+    cursor: pointer;
+}
+.media-item:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+/* Album art animation */
+#player-art {
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+.playing #player-art {
+    transform: scale(1.05);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
 }
 
 /* Other styles */
